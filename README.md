@@ -1,6 +1,12 @@
 # Movie GPT
 - Setup the frontend using vite 
-- Configured Tailwindcss from styling
+- Configured Tailwindcss for styling
+- Header
+- Routing of App
+- Login Form
+- Signup From
+- Form validation
+- useRef Hook
 
 # Features
 - Login/Sign Up
