@@ -1,13 +1,24 @@
 import { useState, useRef } from "react"
 import Header from "./Header"
 import { checkValidateData } from "../utils/validate";
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {auth} from "../utils/firbase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+
 const Login = () => {
+  const dispatch = useDispatch();
   const [signForm, setSignIn] = useState(true)
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const email = useRef(null);
   const password = useRef(null);
+  const name = useRef(null);
+  const navigate = useNavigate();
   const toggleSignInForm=()=>{
     setErrorMessage("")
+    setSuccessMessage("");
     setSignIn(!signForm)
   }
 
@@ -17,6 +28,54 @@ const Login = () => {
     console.log(password.current.value)
     const msg = checkValidateData(email.current.value,password.current.value)
     setErrorMessage(msg);
+    if(msg) return;
+    if(!signForm){
+      //sign up the user
+      createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed up 
+          const user = userCredential.user;
+          setSuccessMessage("User Sign up successfully");
+          updateProfile(user, {
+            displayName: name.current.value, photoURL: "https://avatars.githubusercontent.com/u/108270460?v=4"
+          }).then(() => {
+            // Profile updated!
+            const {uid, email, displayName, photoURL} = auth.currentUser;
+            dispatch(addUser({uid:uid, email:email, displayName:displayName, photoURL:photoURL}));
+            navigate("/browse");
+            // ...
+          }).catch((error) => {
+            // An error occurred
+            setErrorMessage(error);            // ...
+          });
+          
+          console.log(user);
+          
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode+ "-"+errorMessage);
+          // ..
+        });
+    }else{
+      //sign in the user
+      signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          console.log(user);
+          setSuccessMessage("User Sign in successfully");
+          navigate("/browse");
+        
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode+ "-"+errorMessage);
+        });
+    }
     
     
   }
@@ -36,6 +95,7 @@ const Login = () => {
         {
           signForm || 
             <input 
+              ref={name}
               type="text" 
               placeholder="Enter your name" 
               className="p-2 my-2  w-full rounded-lg text-black bg-slate-300"
@@ -57,7 +117,8 @@ const Login = () => {
         <button className="py-2 rounded-lg my-6 bg-red-600 w-full cursor-pointer" onClick={handleButtonClick}>
           {signForm ? "Sign in":"Sign up"}
         </button>
-        <p className="text-red-500 text-xs ">{errorMessage}</p>
+        {errorMessage && <p className="text-red-600 text-xs">{errorMessage}</p>}
+        {successMessage && <p className="text-green-500 text-xs">{successMessage}</p>}
         <div className="my-4 py-2 cursor-pointer" onClick={toggleSignInForm}>
           <p>
             {signForm ? "New to Netflix? Sign up now.":"Already a member? Sign in now."}
