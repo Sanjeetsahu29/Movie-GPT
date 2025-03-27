@@ -9,6 +9,8 @@
 - useRef Hook
 - Firebase setup
 - Deploying our app to production
+- Added the redux store to efficiently manage the global state of the users
+- Add user image once he signin/signup 
 
 # Features
 - Login/Sign Up
