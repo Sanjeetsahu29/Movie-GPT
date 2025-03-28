@@ -11,7 +11,9 @@
 - Deploying our app to production
 - Added the redux store to efficiently manage the global state of the users
 - Add user image once he signin/signup 
-
+- Bug Fix(First): Sign up user displayName and profile picture update
+- Bug Fix(Second): If the user is not logged in Redirect to '/browse' to Login Page and vice-versa
+ 
 # Features
 - Login/Sign Up
     -Sign in/Sign up form
@@ -24,5 +26,5 @@
         - Movie suggestions
             -MovieLists * N
 - NetflixGPT
-    - Search Bar
+    - Search Bar 
     - Movie Suggestions

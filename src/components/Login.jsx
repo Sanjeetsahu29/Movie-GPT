@@ -3,7 +3,6 @@ import Header from "./Header"
 import { checkValidateData } from "../utils/validate";
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {auth} from "../utils/firbase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 
@@ -15,7 +14,6 @@ const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
   const name = useRef(null);
-  const navigate = useNavigate();
   const toggleSignInForm=()=>{
     setErrorMessage("")
     setSuccessMessage("");
@@ -42,7 +40,7 @@ const Login = () => {
             // Profile updated!
             const {uid, email, displayName, photoURL} = auth.currentUser;
             dispatch(addUser({uid:uid, email:email, displayName:displayName, photoURL:photoURL}));
-            navigate("/browse");
+           
             // ...
           }).catch((error) => {
             // An error occurred
@@ -67,7 +65,7 @@ const Login = () => {
           const user = userCredential.user;
           console.log(user);
           setSuccessMessage("User Sign in successfully");
-          navigate("/browse");
+          
         
         })
         .catch((error) => {
